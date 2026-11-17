@@ -1,0 +1,356 @@
+/* Fonte (Helvetica Neue World, kit Adobe Fonts da ND) carregada por <link> no index.html */
+@import "tailwindcss";
+@source "./**/*.{ts,tsx}";
+
+/*
+ * Design system Nova Dimensão (design-system.md).
+ * Tamanhos: os valores-base abaixo são do celular (fluxo vertical). A partir de 1024px
+ * cada slide vira um palco fixo de 1920×1080 (escala de slide do design system) que é
+ * reduzido inteiro para caber na tela com `zoom` — ver .nd-stage e Deck.tsx.
+ */
+@theme {
+  /* Cores — só os tokens do design system (tema escuro é o padrão) */
+  --color-*: initial;
+  --color-surface: #0b1226;
+  --color-surface-deep: #070c1c;
+  --color-surface-raised: #141c38;
+  --color-brand-navy: #212d5b;
+  --color-navy-900: #0b1226;
+  --color-ink: #f9fbff;
+  --color-ink-muted: #8f9cc4;
+  --color-ink-soft: #c9d2e8;
+  --color-line: #2a3560;
+  --color-orange: #ff4800;
+  --color-orange-deep: #e8470c;
+  --color-orange-soft: #ff8a57;
+  --color-orange-start: #f68643;
+  --color-peach: #ffd5c2;
+  --color-orange-tint: rgb(255 72 0 / 0.16);
+  --color-on-accent: #f9fbff;
+  --color-verified: #3897f0;
+  --color-paper: #f4f6fb;
+  --color-white: #ffffff;
+
+  /* Tipografia — uma família só; hierarquia por tamanho, peso e cor */
+  --font-sans: "helvetica-neue-world", "Helvetica Neue", Helvetica, Arial, system-ui, -apple-system, sans-serif;
+
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 700;
+
+  --text-title: 2rem;
+  --text-title--line-height: 1.08;
+  --text-title--letter-spacing: -0.03em;
+  --text-title--font-weight: 700;
+
+  --text-title-sm: 1.75rem;
+  --text-title-sm--line-height: 1.08;
+  --text-title-sm--letter-spacing: -0.03em;
+  --text-title-sm--font-weight: 700;
+
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.1;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h3--font-weight: 700;
+
+  --text-h4: 1.1875rem;
+  --text-h4--line-height: 1.2;
+  --text-h4--letter-spacing: -0.015em;
+  --text-h4--font-weight: 700;
+
+  --text-stat: 2.75rem;
+  --text-stat--line-height: 1;
+  --text-stat--letter-spacing: -0.03em;
+  --text-stat--font-weight: 700;
+
+  --text-stat-sm: 2.25rem;
+  --text-stat-sm--line-height: 1;
+  --text-stat-sm--letter-spacing: -0.03em;
+  --text-stat-sm--font-weight: 700;
+
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.5;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.5;
+
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.45;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.3;
+  --text-eyebrow--letter-spacing: 0.08em;
+  --text-eyebrow--font-weight: 700;
+
+  --text-note: 0.8125rem;
+  --text-note--line-height: 1.4;
+
+  --text-button: 1.0625rem;
+  --text-button--line-height: 1.3;
+  --text-button--font-weight: 700;
+
+  /* Grid do slide: margens laterais 120, topo 96, base 80 (no palco) */
+  --spacing-slide-x: 1.25rem;
+  --spacing-slide-t: 3.5rem;
+  --spacing-slide-b: 2.5rem;
+
+  /* Forma */
+  --radius-sm: 6px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --shadow-cta: 0 8px 24px rgb(255 72 0 / 0.5);
+  --shadow-card: 0 1px 2px rgb(33 45 91 / 0.05);
+  --shadow-float: 0 24px 60px -24px rgb(7 12 28 / 0.55);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ⚠️ REGRA ABSOLUTA: NUNCA coloque resets CSS fora de @layer.
+   O Tailwind v4 coloca todos os utilitários dentro de @layer utilities.
+   Estilos fora de @layer têm prioridade sobre @layer independente de especificidade,
+   anulando silenciosamente classes como py-, px-, mx-auto, gap-, etc. */
+
+@layer base {
+  /* Palco 1920×1080: escala de slide do design system (web × 1,5) */
+  @media (width >= 64rem) {
+    :root {
+      --text-display: 96px;
+      --text-title: 72px;
+      --text-title-sm: 60px;
+      --text-h3: 48px;
+      --text-h4: 30px;
+      --text-stat: 96px;
+      --text-stat-sm: 72px;
+      --text-lead: 28px;
+      --text-body: 24px;
+      --text-body-sm: 21px;
+      --text-eyebrow: 18px;
+      --text-note: 16px;
+      --text-button: 26px;
+      --spacing-slide-x: 120px;
+      --spacing-slide-t: 96px;
+      --spacing-slide-b: 80px;
+    }
+  }
+
+  /* Tokens semânticos por tema (design-system.md §3.2). Escuro é o padrão. */
+  :root,
+  [data-theme="dark"] {
+    --color-surface: #0b1226;
+    --color-surface-deep: #070c1c;
+    --color-surface-raised: #141c38;
+    --color-ink: #f9fbff;
+    --color-ink-muted: #8f9cc4;
+    --color-ink-soft: #c9d2e8;
+    --color-line: #2a3560;
+    --color-orange-soft: #ff8a57;
+    --color-orange-tint: rgb(255 72 0 / 0.16);
+    --card-bg: #141c38;
+    --card-border: rgb(201 210 232 / 0.12);
+    --card-shadow: none;
+    color-scheme: dark;
+  }
+
+  [data-theme="light"] {
+    --color-surface: #f4f6fb;
+    --color-surface-deep: #ffffff;
+    --color-surface-raised: #ffffff;
+    --color-ink: #212d5b;
+    --color-ink-muted: #6f7ca5;
+    /* corpo em navy a 80% (hierarquia por opacidade no claro) */
+    --color-ink-soft: rgb(33 45 91 / 0.8);
+    --color-line: #c9d2e8;
+    --color-orange-soft: #e8470c;
+    --color-orange-tint: rgb(255 72 0 / 0.1);
+    --card-bg: #ffffff;
+    --card-border: rgb(33 45 91 / 0.06);
+    --card-shadow: 0 1px 2px rgb(33 45 91 / 0.05);
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-surface-deep);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-kerning: normal;
+  }
+
+  ::selection {
+    background-color: var(--color-orange);
+    color: var(--color-on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-orange-soft);
+    outline-offset: 4px;
+  }
+}
+
+/* Componentes do design system (prefixo nd-) */
+@layer components {
+  /* Palco do slide: 1920×1080 reduzido para caber na tela (o --stage-zoom vem do Deck) */
+  @media (width >= 64rem) {
+    .nd-stage {
+      zoom: var(--stage-zoom, 1);
+    }
+  }
+
+  /* Eyebrow — caixa alta, 700, +0,08em */
+  .nd-eyebrow {
+    font-size: var(--text-eyebrow);
+    line-height: var(--text-eyebrow--line-height);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  /* Card padrão — branco no claro, surface-raised no escuro */
+  .nd-card {
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Card de destaque no escuro — borda em gradiente CTA */
+  .nd-card-featured {
+    --featured-bg: var(--card-bg);
+    border-radius: var(--radius-lg);
+    border: 2px solid transparent;
+    background:
+      linear-gradient(var(--featured-bg), var(--featured-bg)) padding-box,
+      linear-gradient(90deg, var(--color-orange-start) 0%, var(--color-orange) 100%) border-box;
+  }
+
+  /* Card laranja translúcido (alerta / insight) */
+  .nd-card-alert {
+    border-radius: var(--radius-lg);
+    background: var(--color-orange-tint);
+    border: 1px solid rgb(255 72 0 / 0.4);
+    color: var(--color-peach);
+  }
+
+  /* Contorno neutro (o "fica com você", lado apagado) */
+  .nd-card-outline {
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+  }
+
+  /* Letras gigantes em gradiente CTA (ex.: método ESCALA) */
+  .nd-gradient-text {
+    background-image: linear-gradient(90deg, var(--color-orange-start) 0%, var(--color-orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Número em contorno laranja (engrenagens 01/02/03) */
+  .nd-outline-text {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--color-orange);
+  }
+
+  /* Botão primário (CTA) — pill, gradiente, seta que desliza no hover */
+  .nd-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    min-height: 44px;
+    padding: 0.9em 1.85em;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--color-orange-start) 0%, var(--color-orange) 100%);
+    color: var(--color-on-accent);
+    font-size: var(--text-button);
+    line-height: var(--text-button--line-height);
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: var(--shadow-cta);
+    cursor: pointer;
+    transition: background 0.25s ease-out;
+  }
+  .nd-btn svg {
+    transition: transform 0.25s ease-out;
+  }
+  @media (hover: hover) {
+    .nd-btn:hover {
+      background: var(--color-orange-deep);
+    }
+    .nd-btn:hover svg {
+      transform: translateX(4px);
+    }
+  }
+
+  /* Anel em gradiente Instagram — só em avatar e mockup de perfil/post */
+  .nd-ig-ring {
+    background: linear-gradient(45deg, #feda75, #fa7e1e 30%, #d62976 55%, #962fbf 80%, #4f5bd5);
+  }
+
+  /* Célula da grade "agenda" */
+  .nd-cell {
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--color-line);
+  }
+  .nd-cell-filled {
+    border-radius: var(--radius-sm);
+    background: var(--color-orange-tint);
+    border: 1px solid rgb(255 72 0 / 0.4);
+    color: var(--color-peach);
+  }
+
+  /* Espaço reservado para imagem que ainda não está em public/assets/ */
+  .nd-placeholder {
+    border: 1.5px dashed var(--color-line);
+    background: color-mix(in oklab, var(--color-surface-raised) 60%, transparent);
+    color: var(--color-ink-muted);
+  }
+}
+
+/* Impressão / PDF: um slide por página, em 1920×1080, com tudo revelado */
+@media print {
+  @page {
+    size: 1920px 1080px;
+    margin: 0;
+  }
+  html,
+  body,
+  #root {
+    height: auto;
+    overflow: visible;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  [data-deck-track] {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  [data-slide] {
+    width: 1920px !important;
+    height: 1080px !important;
+    min-height: 0 !important;
+    break-after: page;
+  }
+  .nd-stage {
+    zoom: 1 !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  [data-deck-chrome] {
+    display: none !important;
+  }
+}
