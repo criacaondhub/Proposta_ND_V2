@@ -1,8 +1,9 @@
 import { Quote } from 'lucide-react'
 import { CHATGPT } from '@/config/content'
 import { IconBox } from '@/components/ui/Atoms'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Card } from '@/components/ui/Card'
-import { Media, Phone } from '@/components/ui/Media'
+import { Media } from '@/components/ui/Media'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
 import { SlideHeader } from '@/components/ui/Typography'
@@ -12,7 +13,7 @@ export function ChatGpt() {
   const { title, lead, items, proof } = CHATGPT
 
   return (
-    <Slide>
+    <Slide background={<PatternRail side="right" />}>
       <div className="grid flex-1 gap-10 lg:grid-cols-12 lg:gap-8">
         <div className="flex flex-col lg:col-span-7">
           <SlideHeader title={title} lead={lead} size="title-sm" />
@@ -32,11 +33,15 @@ export function ChatGpt() {
         </div>
 
         <Reveal step={1} className="relative flex items-center justify-center lg:col-span-5">
-          <Phone className="aspect-[9/19] w-[240px] rotate-[2deg] lg:w-[340px]">
-            <Media photo={proof.media} className="h-full w-full" />
-          </Phone>
-          <Card className="absolute bottom-4 left-0 max-w-[85%] shadow-float lg:bottom-[60px] lg:left-[-10px] lg:max-w-[440px] lg:p-8">
-            <Quote aria-hidden className="size-6 text-orange lg:size-9" strokeWidth={1.75} />
+          {/* print do WhatsApp Web no aspecto natural, não em moldura de celular */}
+          <div
+            data-theme="dark"
+            className="relative w-full max-w-[420px] rotate-[1.5deg] overflow-hidden rounded-2xl border border-line bg-navy-900 p-1.5 shadow-float lg:max-w-[560px] lg:rounded-3xl lg:p-2"
+          >
+            <Media photo={proof.media} className="aspect-[645/598] w-full rounded-xl lg:rounded-2xl" />
+          </div>
+          <Card className="absolute -bottom-4 left-0 max-w-[80%] shadow-float lg:-bottom-6 lg:-left-6 lg:max-w-[380px] lg:p-7">
+            <Quote aria-hidden className="size-6 text-orange lg:size-8" strokeWidth={1.75} />
             <p className="mt-3 text-h4 text-ink lg:mt-4">{proof.quote}</p>
             <p className="mt-2 text-note text-ink-muted lg:mt-3">{proof.caption}</p>
           </Card>

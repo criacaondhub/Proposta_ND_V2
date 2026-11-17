@@ -2,12 +2,12 @@ import {
   Calendar,
   CalendarCheck,
   ChartColumn,
-  Clapperboard,
   Clock,
   Eye,
   Fingerprint,
   Funnel,
   Image,
+  Images,
   Library,
   Megaphone,
   MessageCircle,
@@ -22,6 +22,7 @@ import {
   TrendingUp,
   UserCheck,
   Users,
+  Video,
   Wallet,
   type LucideIcon,
 } from 'lucide-react'
@@ -146,6 +147,7 @@ export const RESULTADOS = {
     {
       name: 'Dr. Rafael Ultramar',
       category: 'Transplante capilar · média mensal',
+      src: 'assets/cliente-rafael-ultramar.webp',
       stat: { prefix: 'R$', value: '788.000', unit: '/mês' },
       caption: 'faturamento via marketing',
       metrics: [
@@ -157,6 +159,7 @@ export const RESULTADOS = {
     {
       name: 'Dra. Cláudia Mocelin',
       category: 'Consultas · média mensal',
+      src: 'assets/cliente-claudia-ultramar.webp',
       stat: { value: '20', unit: 'consultas/mês' },
       caption: 'com menos de R$ 2 mil de investimento em ads',
       metrics: [
@@ -168,6 +171,7 @@ export const RESULTADOS = {
     {
       name: 'Instituto Long Life',
       category: 'Recuperação · primeira semana',
+      src: 'assets/cliente-instituto-long-life.png',
       stat: { value: '7', unit: 'dias' },
       caption: 'para o primeiro resultado',
       metrics: [
@@ -186,12 +190,11 @@ export const BASTIDORES = {
   label: 'Bastidores dos resultados',
   eyebrow: 'Bastidores',
   title: 'Resultado de verdade das nossas campanhas **chega assim:**',
-  lead: 'Prints reais dos grupos com os nossos clientes: agendamentos, consultas realizadas e contratos fechados, mês a mês.',
+  lead: 'Prints reais dos grupos com os nossos clientes: agendamentos, consultas realizadas e contratos fechados, mês a mês.',
   prints: [
-    { src: 'assets/bastidores-01.webp', alt: 'Print real de grupo com cliente: agendamentos', label: 'Print do grupo 1' },
-    { src: 'assets/bastidores-02.webp', alt: 'Print real de grupo com cliente: consultas realizadas', label: 'Print do grupo 2' },
-    { src: 'assets/bastidores-03.webp', alt: 'Print real de grupo com cliente: contratos fechados', label: 'Print do grupo 3' },
-    { src: 'assets/bastidores-04.webp', alt: 'Print real de grupo com cliente: resultado do mês', label: 'Print do grupo 4' },
+    { src: 'assets/bastidores-01.jpg', alt: 'Print real de grupo com cliente: fechamento de janeiro', label: 'Print do grupo 1' },
+    { src: 'assets/bastidores-02.jpg', alt: 'Print real de grupo com cliente: fechamento de maio', label: 'Print do grupo 2' },
+    { src: 'assets/bastidores-03.jpg', alt: 'Print real de grupo com cliente: fechamento de julho', label: 'Print do grupo 3' },
   ] satisfies Photo[],
 }
 
@@ -208,7 +211,7 @@ export const AUDIENCIA = {
       value: '231 mil',
       caption: 'de views neste carrossel orgânico',
       icon: Eye,
-      media: { src: 'assets/audiencia-eduardo-schor.webp', alt: 'Carrossel orgânico do Dr. Eduardo Schor', label: 'Print do carrossel' },
+      media: { src: 'assets/audiencia-eduardo-schor.jpg', alt: 'Carrossel orgânico do Dr. Eduardo Schor', label: 'Print do carrossel' },
     },
     {
       name: 'Dr. Rafael Ultramar',
@@ -216,7 +219,7 @@ export const AUDIENCIA = {
       value: '10 mil',
       caption: 'de views neste vídeo orgânico focado em gerar autoridade',
       icon: Play,
-      media: { src: 'assets/audiencia-rafael-ultramar.webp', alt: 'Vídeo orgânico do Dr. Rafael Ultramar', label: 'Thumb do vídeo' },
+      media: { src: 'assets/audiencia-rafael-ultramar.jpg', alt: 'Vídeo orgânico do Dr. Rafael Ultramar', label: 'Thumb do vídeo' },
     },
     {
       name: 'Instituto LongLife',
@@ -224,7 +227,7 @@ export const AUDIENCIA = {
       value: 'Depoimento',
       caption: 'Paloma, gerente comercial de clínica parceira da ND',
       icon: Quote,
-      media: { src: 'assets/audiencia-longlife.webp', alt: 'Depoimento da Paloma, do Instituto LongLife', label: 'Thumb do depoimento' },
+      media: { src: 'assets/audiencia-longlife.jpg', alt: 'Depoimento da Paloma, do Instituto LongLife', label: 'Thumb do depoimento' },
     },
   ],
   note: 'Conteúdos orgânicos gravados, editados e publicados pelos próprios profissionais.',
@@ -279,7 +282,7 @@ export const CHATGPT = {
     { icon: ChartColumn, title: 'Sabe ler números e tomar decisões', text: 'Gente olhando o seu resultado todo mês e corrigindo a rota. Prompt não te avisa quando algo está errado.' },
   ] satisfies IconItem[],
   proof: {
-    media: { src: 'assets/prova-alexandre-kaue.webp', alt: 'Print do grupo do Dr. Alexandre Kauê com o time da ND', label: 'Print do grupo do Dr. Alexandre Kauê' },
+    media: { src: 'assets/prova-alexandre-kaue.jpg', alt: 'Print do grupo do Dr. Alexandre Kauê com o time da ND', label: 'Print do grupo do Dr. Alexandre Kauê' },
     quote: '“Foi o melhor script que vocês escreveram até hoje.”',
     caption: 'Grupo do Dr. Alexandre Kauê com o nosso time',
   },
@@ -424,16 +427,15 @@ export const CRIATIVOS = {
   eyebrow: 'Entregável 2 · Criativos de anúncio',
   title: '12 criativos por mês. Pensados pra gerar **agendamento**, não curtida.',
   cards: [
-    { icon: Clapperboard, value: '8', unit: 'vídeos/mês', tag: '4 roteiros por quinzena', text: 'A ND escreve, você só grava. Gancho, argumento e chamada para o WhatsApp.' },
-    { icon: Image, value: '4', unit: 'estáticos/mês', tag: '2 por quinzena', text: 'Copy + layout: a ND entrega pronto pra rodar. Você não precisa fazer nada.' },
+    { icon: Video, value: '8', unit: 'vídeos/mês', tag: '4 roteiros por quinzena', text: 'A ND escreve, você só grava. Gancho, argumento e chamada para o WhatsApp.' },
+    { icon: Images, value: '4', unit: 'estáticos/mês', tag: '2 por quinzena', text: 'Copy + layout: a ND entrega pronto pra rodar. Você não precisa fazer nada.' },
   ],
   note: 'Todo criativo testado e medido. O que performa ganha verba; o que não performa sai.',
   galleryLabel: 'Anúncios reais que produzimos para médicos:',
   gallery: [
-    { src: 'assets/anuncio-01.webp', alt: 'Anúncio em vídeo produzido pela ND para médico', label: 'Anúncio 1 (9:16)' },
-    { src: 'assets/anuncio-02.webp', alt: 'Anúncio estático produzido pela ND para médico', label: 'Anúncio 2 (4:5)' },
-    { src: 'assets/anuncio-03.webp', alt: 'Anúncio em vídeo produzido pela ND para médico', label: 'Anúncio 3 (9:16)' },
-    { src: 'assets/anuncio-04.webp', alt: 'Anúncio estático produzido pela ND para médico', label: 'Anúncio 4 (4:5)' },
+    { src: 'assets/anuncio-01.jpg', alt: 'Anúncio em vídeo produzido pela ND para médico', label: 'Anúncio 1 (9:16)' },
+    { src: 'assets/anuncio-02.png', alt: 'Anúncio estático produzido pela ND para médico — Dr. Marcel Ferreira', label: 'Anúncio 2 (4:5)' },
+    { src: 'assets/anuncio-03.png', alt: 'Anúncio estático produzido pela ND para médico — nutrologia', label: 'Anúncio 3 (4:5)' },
   ] satisfies Photo[],
 }
 
@@ -461,11 +463,6 @@ export const BIBLIOTECA = {
     title: 'Por que isso te diferencia:',
     text: 'o que trava o médico na hora de produzir é a ideia e o roteiro. Isso chega pronto toda semana, alinhado ao seu posicionamento. A ND entrega ideias e roteiros. Gravar, editar e postar é com você.',
   },
-  print: {
-    src: 'assets/biblioteca-print.webp',
-    alt: 'Print da biblioteca de ideias e roteiros da ND',
-    label: 'Inserir print da biblioteca de ideias e roteiros',
-  } satisfies Photo,
 }
 
 // 17 · Entregável 4 · Relatório diário de tráfego
@@ -479,19 +476,11 @@ export const RELATORIO = {
     { icon: ChartColumn, title: 'O que importa, sem enrolação.', text: 'Investimento, conversas geradas e custo por conversa.' },
     { icon: Eye, title: 'Transparência total.', text: 'Você sabe exatamente pra onde vai cada real da sua verba.' },
   ] satisfies IconItem[],
-  /* mock ilustrativo do relatório (valores coerentes com a conta do slide de ROI: R$ 2.000/mês) */
-  report: {
-    title: 'Relatório diário · Tráfego',
-    time: 'Hoje, 08:00',
-    kpis: [
-      { label: 'Investimento', value: 'R$ 66,70' },
-      { label: 'Conversas', value: '4' },
-      { label: 'Custo por conversa', value: 'R$ 16,68' },
-    ],
-    chartLabel: 'Custo por conversa · últimos 14 dias',
-    series: [24.1, 22.8, 23.5, 21.0, 21.9, 19.7, 20.4, 18.8, 19.5, 17.9, 18.4, 17.2, 17.6, 16.68],
-    disclaimer: 'Exemplo ilustrativo',
-  },
+  print: {
+    src: 'assets/relatorio-print.png',
+    alt: 'Print do painel Controle Diário de Mídia da ND com investimento, leads, CPL, cliques, CTR e gráfico de investimento',
+    label: 'Print do relatório diário',
+  } satisfies Photo,
 }
 
 // 18 · Entregável 5 · Reunião mensal de resultado

@@ -1,6 +1,6 @@
 import { BIBLIOTECA, type Goal } from '@/config/content'
 import { Chip, type ChipVariant } from '@/components/ui/Atoms'
-import { Media } from '@/components/ui/Media'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
 import { SlideHeader } from '@/components/ui/Typography'
@@ -15,12 +15,12 @@ const GOAL_CHIP: Record<Goal, ChipVariant> = {
 
 // 16 · Entregável 3 · Biblioteca semanal — a grade "agenda" do site em 7 colunas (SEG→DOM) + selo 28/mês
 export function Biblioteca() {
-  const { eyebrow, title, lead, seal, week, note, why, print } = BIBLIOTECA
+  const { title, lead, seal, week, note, why } = BIBLIOTECA
 
   return (
-    <Slide theme="light">
+    <Slide theme="light" background={<PatternRail side="right" tone="orange" />}>
       <div className="flex items-start justify-between gap-8">
-        <SlideHeader eyebrow={eyebrow} title={title} lead={lead} />
+        <SlideHeader title={title} lead={lead} />
         <Reveal order={3} className="hidden shrink-0 lg:block">
           <div className="flex size-[200px] flex-col items-center justify-center rounded-full bg-orange text-center text-on-accent shadow-cta">
             <p className="flex items-baseline">
@@ -47,13 +47,10 @@ export function Biblioteca() {
         <p className="mt-3 text-note text-ink-muted lg:mt-4">{note}</p>
       </Reveal>
 
-      <Reveal step={2} className="mt-6 lg:mt-auto">
-        <div className="grid gap-4 lg:grid-cols-12 lg:items-center lg:gap-8">
-          <p className="text-lead text-ink-soft lg:col-span-7">
-            <strong className="font-bold text-ink">{why.title}</strong> {why.text}
-          </p>
-          <Media photo={print} className="h-[180px] rounded-lg lg:col-span-5 lg:h-[250px]" />
-        </div>
+      <Reveal step={2} className="mt-6 lg:mt-10">
+        <p className="max-w-[86ch] text-lead text-ink-soft">
+          <strong className="font-bold text-ink">{why.title}</strong> {why.text}
+        </p>
       </Reveal>
     </Slide>
   )

@@ -9,11 +9,11 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 14 · Entregável 1 · Tráfego no Meta — comparativo antes × gestão ND Med, com pill "vs"
 export function Trafego() {
-  const { eyebrow, title, before, after, note } = TRAFEGO
+  const { title, before, after, note } = TRAFEGO
 
   return (
     <Slide theme="light">
-      <SlideHeader eyebrow={eyebrow} title={title} size="title-sm" className="max-w-[1500px]" />
+      <SlideHeader title={title} size="title-sm" className="max-w-[1500px]" />
 
       <div className="relative mt-8 grid gap-4 lg:my-auto lg:grid-cols-2 lg:items-center lg:gap-16 lg:pt-4">
         <Reveal step={1} className="flex">

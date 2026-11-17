@@ -8,11 +8,11 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 18 · Entregável 5 · Reunião mensal — citação, ciclo de 5 etapas com retorno, 3 gargalos
 export function Reuniao() {
-  const { eyebrow, title, quote, cycle, cycleNote, tag, bottlenecks } = REUNIAO
+  const { title, quote, cycle, cycleNote, tag, bottlenecks } = REUNIAO
 
   return (
     <Slide theme="light">
-      <SlideHeader eyebrow={eyebrow} title={title} size="title-sm" className="max-w-[1500px]" />
+      <SlideHeader title={title} size="title-sm" className="max-w-[1500px]" />
       <Reveal order={3} className="mt-3 lg:mt-5">
         <p className="text-[1.25rem] leading-tight font-bold tracking-[-0.02em] text-orange lg:text-[34px]">{quote}</p>
       </Reveal>

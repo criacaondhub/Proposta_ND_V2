@@ -1,4 +1,5 @@
 import { AUDIENCIA } from '@/config/content'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Media } from '@/components/ui/Media'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
@@ -6,11 +7,11 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 06 · Audiência e autoridade — 3 mockups 9:16 com anel Instagram + número em laranja
 export function Audiencia() {
-  const { eyebrow, title, items, note } = AUDIENCIA
+  const { title, items, note } = AUDIENCIA
 
   return (
-    <Slide>
-      <SlideHeader eyebrow={eyebrow} title={title} size="title-sm" className="max-w-[1500px]" />
+    <Slide background={<PatternRail side="left" />}>
+      <SlideHeader title={title} size="title-sm" className="max-w-[1500px]" />
 
       <div className="mt-8 grid gap-8 lg:my-auto lg:grid-cols-3 lg:gap-8 lg:pt-6">
         {items.map((item, i) => {

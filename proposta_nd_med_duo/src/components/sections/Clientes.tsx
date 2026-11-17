@@ -7,11 +7,11 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 03 · Clientes — grade de cards de perfil no estilo do site (foto, nome, especialidade, @ verificado, seguidores)
 export function Clientes() {
-  const { eyebrow, title, items } = CLIENTES
+  const { title, items } = CLIENTES
 
   return (
     <Slide theme="light" className="lg:justify-center">
-      <SlideHeader eyebrow={eyebrow} title={title} align="center" />
+      <SlideHeader title={title} align="center" />
 
       <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:mt-14 lg:grid-cols-6 lg:gap-6">
         {items.map((client, i) => (

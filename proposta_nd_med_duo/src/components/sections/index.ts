@@ -79,7 +79,7 @@ export const SLIDES: DeckSlide[] = [
   { id: CONTA.id, label: CONTA.label, steps: 2, Component: Conta },
   { id: MAQUINA.id, label: MAQUINA.label, steps: 3, Component: Maquina },
   { id: COMPROMISSO.id, label: COMPROMISSO.label, steps: COMPROMISSO.questions.length - 1, Component: Compromisso },
-  { id: INVESTIMENTO.id, label: INVESTIMENTO.label, steps: 2, Component: Investimento },
+  { id: INVESTIMENTO.id, label: INVESTIMENTO.label, steps: 1, Component: Investimento },
   { id: ROI.id, label: ROI.label, steps: ROI.funnel.length + 1, Component: Roi },
   { id: ENCERRAMENTO.id, label: ENCERRAMENTO.label, steps: 0, Component: Encerramento },
 ]

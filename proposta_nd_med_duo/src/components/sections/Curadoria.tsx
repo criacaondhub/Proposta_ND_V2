@@ -5,18 +5,15 @@ import { CheckList, Chip } from '@/components/ui/Atoms'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
-import { Eyebrow, Title } from '@/components/ui/Typography'
+import { Title } from '@/components/ui/Typography'
 
 // 12 · Curadoria de conteúdo ND — citação, stepper de 6 passos (1 uma vez, 2–6 todo mês), entrega × você
 export function Curadoria() {
-  const { eyebrow, quote, text, onceTag, monthlyTag, cfmTag, process, delivers, yours } = CURADORIA
+  const { quote, text, onceTag, monthlyTag, cfmTag, process, delivers, yours } = CURADORIA
 
   return (
     <Slide>
-      <Reveal order={0}>
-        <Eyebrow text={eyebrow} />
-      </Reveal>
-      <Reveal order={1} className="mt-3 lg:mt-5">
+      <Reveal order={1}>
         {/* aspas laranja grandes na citação */}
         <Title text={`**“**${quote}**”**`} size="title-sm" className="max-w-[1560px]" />
       </Reveal>
@@ -33,7 +30,8 @@ export function Curadoria() {
             </Chip>
           </div>
           <div className="relative col-span-5 flex justify-center">
-            <span className="absolute inset-x-6 top-1/2 h-3 rounded-t-md border-x border-t border-orange/50" />
+            {/* bracket começa no centro do círculo 2 e termina no centro do círculo 6 (cada col ≈ 20%, círculo ≈ 24px do início) */}
+            <span className="absolute top-1/2 right-[18%] left-[2%] h-3 rounded-t-md border-x border-t border-orange/50" />
             <Chip variant="tint" className="relative bg-surface uppercase ring-8 ring-surface">
               {monthlyTag}
             </Chip>
@@ -77,7 +75,7 @@ export function Curadoria() {
         </ol>
       </Reveal>
 
-      <Reveal step={2} className="mt-8 lg:mt-auto">
+      <Reveal step={2} className="mt-8 lg:mt-14">
         <div className="grid gap-3 lg:grid-cols-12 lg:gap-8">
           <Card className="lg:col-span-8 lg:px-10 lg:py-8">
             <p className="nd-eyebrow text-orange-soft">{delivers.title}</p>

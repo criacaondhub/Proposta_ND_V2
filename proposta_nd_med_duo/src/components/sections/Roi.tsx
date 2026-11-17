@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { ROI } from '@/config/content'
 import { cn, splitCurrency } from '@/lib/utils'
 import { Stat } from '@/components/ui/Atoms'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { RichText } from '@/components/ui/RichText'
@@ -10,12 +11,12 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 24 · ROI — funil de 5 barras estreitando (a última em gradiente CTA) + card do ponto de equilíbrio
 export function Roi() {
-  const { eyebrow, title, funnel, breakEven, note } = ROI
+  const { title, funnel, breakEven, note } = ROI
   const total = splitCurrency(breakEven.total)
 
   return (
-    <Slide>
-      <SlideHeader eyebrow={eyebrow} title={title} />
+    <Slide background={<PatternRail side="right" />}>
+      <SlideHeader title={title} />
 
       <div className="mt-8 grid flex-1 gap-6 lg:mt-10 lg:grid-cols-12 lg:items-center lg:gap-8">
         <ol className="flex flex-col gap-2 lg:col-span-7 lg:gap-3">

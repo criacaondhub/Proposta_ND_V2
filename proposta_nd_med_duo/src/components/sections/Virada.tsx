@@ -1,18 +1,90 @@
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
+import type { LucideIcon } from 'lucide-react'
+import { Calendar, CalendarCheck, MessageCircle, Store } from 'lucide-react'
 import { VIRADA } from '@/config/content'
 import { pad2 } from '@/lib/utils'
-import { IconBox } from '@/components/ui/Atoms'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
 import { SlideHeader, Title } from '@/components/ui/Typography'
 
-// 08 · A virada — timeline de 4 cards ligados por linha fina + faixa navy de fechamento
-export function Virada() {
-  const { eyebrow, title, moments, closing } = VIRADA
+/*
+ * Cada ícone tem um loop próprio alinhado ao que ele representa:
+ * Calendar — "tick" sutil (gira levinho e volta, como virar página)
+ * Store — abre/respira (escala + leve bob)
+ * MessageCircle — campainha (rotação curta, estilo toque de WhatsApp)
+ * CalendarCheck — pulso aprovado (scale + brilho)
+ */
+const ICON_MOTIONS: Record<string, Variants> = {
+  Calendar: {
+    animate: {
+      rotate: [0, -18, 18, -10, 10, 0],
+      scale: [1, 1.1, 1.1, 1.05, 1],
+      transition: { duration: 1.8, repeat: Infinity, repeatDelay: 0.6, ease: 'easeInOut' },
+    },
+  },
+  Store: {
+    animate: {
+      y: [0, -10, 0],
+      scale: [1, 1.18, 1],
+      rotate: [0, -3, 3, 0],
+      transition: { duration: 1.9, repeat: Infinity, repeatDelay: 0.4, ease: 'easeInOut' },
+    },
+  },
+  MessageCircle: {
+    animate: {
+      rotate: [0, 22, -22, 18, -14, 10, -6, 0],
+      scale: [1, 1.1, 1.1, 1.05, 1.05, 1, 1, 1],
+      transition: { duration: 1.1, repeat: Infinity, repeatDelay: 0.5, ease: 'easeInOut' },
+    },
+  },
+  CalendarCheck: {
+    animate: {
+      scale: [1, 1.3, 0.92, 1.15, 1],
+      rotate: [0, 4, -4, 2, 0],
+      transition: { duration: 1.4, repeat: Infinity, repeatDelay: 0.6, ease: 'easeInOut' },
+    },
+  },
+}
+
+function getMotionKey(icon: LucideIcon): keyof typeof ICON_MOTIONS {
+  if (icon === Calendar) return 'Calendar'
+  if (icon === Store) return 'Store'
+  if (icon === MessageCircle) return 'MessageCircle'
+  if (icon === CalendarCheck) return 'CalendarCheck'
+  return 'Calendar'
+}
+
+function AnimatedIconBox({ icon: Icon, delay = 0 }: { icon: LucideIcon; delay?: number }) {
+  const reduceMotion = useReducedMotion()
+  const variants = ICON_MOTIONS[getMotionKey(Icon)]
 
   return (
-    <Slide theme="light">
-      <SlideHeader eyebrow={eyebrow} title={title} />
+    <span
+      aria-hidden
+      className="grid size-11 shrink-0 place-items-center rounded-md bg-orange-tint text-orange lg:size-16"
+    >
+      <motion.span
+        className="inline-flex"
+        variants={reduceMotion ? undefined : variants}
+        animate={reduceMotion ? undefined : 'animate'}
+        style={{ transformOrigin: '50% 50%' }}
+        transition={{ delay }}
+      >
+        <Icon className="size-5 lg:size-8" strokeWidth={1.75} />
+      </motion.span>
+    </span>
+  )
+}
+
+// 08 · A virada — timeline de 4 cards ligados por linha fina + faixa navy de fechamento
+export function Virada() {
+  const { title, moments, closing } = VIRADA
+
+  return (
+    <Slide theme="light" background={<PatternRail side="right" tone="orange" />}>
+      <SlideHeader title={title} />
 
       <div className="lg:my-auto lg:pt-6">
         <ol className="relative mt-8 grid gap-3 lg:mt-0 lg:grid-cols-4 lg:gap-8">
@@ -22,7 +94,7 @@ export function Virada() {
             <Reveal as="li" key={moment.title} step={i + 1} className="relative flex">
               <Card className="w-full lg:min-h-[400px] lg:p-9">
                 <div className="flex items-center justify-between">
-                  <IconBox icon={moment.icon} />
+                  <AnimatedIconBox icon={moment.icon} delay={i * 0.35} />
                   <span className="nd-eyebrow text-ink-muted tabular-nums">{pad2(i + 1)}</span>
                 </div>
                 <h3 className="mt-5 text-h4 text-ink lg:mt-10">{moment.title}</h3>

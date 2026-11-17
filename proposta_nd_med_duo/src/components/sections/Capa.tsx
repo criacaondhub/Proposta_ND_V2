@@ -7,11 +7,11 @@ import { Logo } from '@/components/ui/Logo'
 import { Reveal } from '@/components/ui/Reveal'
 import { RichText } from '@/components/ui/RichText'
 import { Slide } from '@/components/ui/Slide'
-import { Eyebrow, Title } from '@/components/ui/Typography'
+import { Title } from '@/components/ui/Typography'
 
 // 01 · Capa — texto à esquerda (7/12), grade "agenda" à direita, glow atrás do título
 export function Capa() {
-  const { eyebrow, title, badge, proof, filled } = CAPA
+  const { title, badge, proof, filled } = CAPA
 
   return (
     <Slide
@@ -24,10 +24,7 @@ export function Capa() {
         <Reveal order={0}>
           <Logo className="h-7 lg:h-11" />
         </Reveal>
-        <Reveal order={1} className="mt-10 lg:mt-16">
-          <Eyebrow text={eyebrow} tone="muted" />
-        </Reveal>
-        <Reveal order={2} className="mt-4 lg:mt-6">
+        <Reveal order={2} className="mt-10 lg:mt-16">
           <Title as="h1" size="display" text={title} />
         </Reveal>
         <Reveal order={3} className="mt-6 lg:mt-10">

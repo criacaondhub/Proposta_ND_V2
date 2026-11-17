@@ -1,6 +1,7 @@
 import { Calculator } from 'lucide-react'
 import { CONTA } from '@/config/content'
 import { Chip, IconBox } from '@/components/ui/Atoms'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Card } from '@/components/ui/Card'
 import { Logo } from '@/components/ui/Logo'
 import { Reveal } from '@/components/ui/Reveal'
@@ -9,11 +10,11 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 20 · Antes do preço, uma conta — "recibo" do time interno × card navy da ND Med, com pill "vs"
 export function Conta() {
-  const { eyebrow, title, team, vs, nd } = CONTA
+  const { title, team, vs, nd } = CONTA
 
   return (
-    <Slide theme="light">
-      <SlideHeader eyebrow={eyebrow} title={title} />
+    <Slide theme="light" background={<PatternRail side="left" tone="orange" />}>
+      <SlideHeader title={title} />
 
       <div className="relative mt-8 grid gap-4 lg:my-auto lg:grid-cols-2 lg:gap-16 lg:pt-4">
         <Reveal step={1} className="flex">

@@ -13,11 +13,11 @@ const STAIR = { base: 190, rise: 52 }
 
 // 10 · 02 · O método ESCALA — escadinha de 6 degraus (E → S → C → A → L → A), cada letra em pé sobre o seu degrau
 export function Escala() {
-  const { eyebrow, title, lead, steps, alert } = ESCALA
+  const { title, lead, steps, alert } = ESCALA
 
   return (
     <Slide background={<Constellation focusX={0.55} focusY={0.62} count={110} seed={23} />}>
-      <SlideHeader eyebrow={eyebrow} title={title} lead={lead} size="title-sm" leadClassName="lg:max-w-none" />
+      <SlideHeader title={title} lead={lead} size="title-sm" leadClassName="lg:max-w-none" />
 
       <ol className="mt-8 grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 lg:mt-auto lg:grid-cols-6 lg:items-end lg:gap-x-2">
         {steps.map((step, i) => (

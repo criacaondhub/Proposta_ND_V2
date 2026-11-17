@@ -8,23 +8,22 @@ import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
 import { SlideHeader } from '@/components/ui/Typography'
 
-/* Galeria no palco: anúncios 9:16 e 4:5 sobrepostos, levemente rotacionados */
+/* Galeria no palco: 1 vídeo 9:16 + 2 estáticos 4:5 sobrepostos, levemente rotacionados */
 const GALLERY = [
-  { x: 0, y: 20, w: 270, ratio: '9 / 16', r: -3 },
-  { x: 220, y: 290, w: 320, ratio: '4 / 5', r: 2 },
-  { x: 440, y: 0, w: 270, ratio: '9 / 16', r: 3 },
-  { x: 500, y: 340, w: 320, ratio: '4 / 5', r: -2 },
+  { x: 0, y: 30, w: 280, ratio: '9 / 16', r: -3 },
+  { x: 240, y: 300, w: 320, ratio: '4 / 5', r: 2 },
+  { x: 500, y: 40, w: 320, ratio: '4 / 5', r: 3 },
 ]
 
 // 15 · Entregável 2 · Criativos de anúncio — 2 cards com número grande + galeria de anúncios reais
 export function Criativos() {
-  const { eyebrow, title, cards, note, galleryLabel, gallery } = CRIATIVOS
+  const { title, cards, note, galleryLabel, gallery } = CRIATIVOS
 
   return (
     <Slide>
       <div className="grid flex-1 gap-10 lg:grid-cols-12 lg:gap-8">
         <div className="flex flex-col lg:col-span-6">
-          <SlideHeader eyebrow={eyebrow} title={title} size="title-sm" />
+          <SlideHeader title={title} size="title-sm" />
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:mt-12 lg:gap-6">
             {cards.map((card, i) => (
@@ -40,6 +39,13 @@ export function Criativos() {
               </Reveal>
             ))}
           </div>
+
+          <Reveal step={2} className="mt-5 lg:mt-6">
+            <p className="flex items-start gap-3 text-pretty text-body-sm text-ink-soft lg:items-center lg:whitespace-nowrap">
+              <FlaskConical aria-hidden className="mt-0.5 size-5 shrink-0 text-orange-soft lg:mt-0 lg:size-7" strokeWidth={1.75} />
+              <span className="text-balance lg:whitespace-nowrap">{note}</span>
+            </p>
+          </Reveal>
         </div>
 
         <div className="flex flex-col lg:col-span-6">
@@ -70,13 +76,6 @@ export function Criativos() {
         </div>
       </div>
 
-      {/* nota em faixa de largura total, numa linha só no desktop */}
-      <Reveal step={2} className="mt-6 lg:mt-8">
-        <p className="flex items-start gap-3 text-body-sm text-ink-soft lg:items-center lg:whitespace-nowrap">
-          <FlaskConical aria-hidden className="mt-0.5 size-5 shrink-0 text-orange-soft lg:mt-0 lg:size-7" strokeWidth={1.75} />
-          {note}
-        </p>
-      </Reveal>
     </Slide>
   )
 }

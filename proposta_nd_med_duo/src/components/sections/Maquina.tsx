@@ -2,6 +2,7 @@ import { Cog } from 'lucide-react'
 import { MAQUINA } from '@/config/content'
 import { splitCurrency } from '@/lib/utils'
 import { CheckList, Chip, Stat } from '@/components/ui/Atoms'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { RichText } from '@/components/ui/RichText'
@@ -10,12 +11,12 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 // 21 · Máquina ND Med — 3 engrenagens (8/12) + card de investimento com borda gradiente (4/12) + faixa Duo × Máquina
 export function Maquina() {
-  const { eyebrow, title, gears, investment, compare } = MAQUINA
+  const { title, gears, investment, compare } = MAQUINA
   const price = splitCurrency(investment.value)
 
   return (
-    <Slide>
-      <SlideHeader eyebrow={eyebrow} title={title} size="title-sm" className="max-w-[1400px]" />
+    <Slide background={<PatternRail side="left" />}>
+      <SlideHeader title={title} size="title-sm" className="max-w-[1400px]" />
 
       <div className="mt-8 grid gap-3 lg:mt-10 lg:grid-cols-12 lg:gap-8">
         <div className="grid gap-3 sm:grid-cols-3 lg:col-span-8 lg:gap-6">

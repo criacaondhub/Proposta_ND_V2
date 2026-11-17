@@ -2,6 +2,7 @@ import { ArrowRight, Plus, Repeat } from 'lucide-react'
 import { Fragment } from 'react'
 import { MOTORES, type Owner } from '@/config/content'
 import { Chip, IconBox, type ChipVariant } from '@/components/ui/Atoms'
+import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
@@ -42,11 +43,11 @@ function EngineCard({ engine }: { engine: Engine }) {
 
 // 11 · Os dois motores — 2 cards grandes com "+" laranja entre eles
 export function Motores() {
-  const { eyebrow, title, engines, closing } = MOTORES
+  const { title, engines, closing } = MOTORES
 
   return (
-    <Slide theme="light">
-      <SlideHeader eyebrow={eyebrow} title={title} />
+    <Slide theme="light" background={<PatternRail side="left" tone="orange" />}>
+      <SlideHeader title={title} />
 
       <div className="lg:my-auto lg:pt-6">
         <div className="mt-8 grid gap-3 lg:mt-0 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
@@ -63,11 +64,9 @@ export function Motores() {
           </Reveal>
         </div>
 
-        <Reveal step={3} className="mt-6 lg:mt-12">
-          <p className="mx-auto flex max-w-[62ch] items-start justify-center gap-3 text-center text-lead text-ink lg:items-center lg:gap-4">
-            <Repeat aria-hidden className="mt-1 size-5 shrink-0 text-orange lg:mt-0 lg:size-8" strokeWidth={2} />
-            <span className="text-balance">{closing}</span>
-          </p>
+        <Reveal step={3} className="mt-6 flex flex-col items-center gap-2 lg:mt-12 lg:gap-3">
+          <Repeat aria-hidden className="size-5 text-orange lg:size-7" strokeWidth={2} />
+          <p className="max-w-[64ch] text-balance text-center text-lead text-ink">{closing}</p>
         </Reveal>
       </div>
     </Slide>
