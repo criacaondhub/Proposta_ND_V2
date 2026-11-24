@@ -1,8 +1,8 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { EyeOff, MessageCircle } from 'lucide-react'
 import { PROBLEMA } from '@/config/content'
 import { useSlide } from '@/lib/deck'
-import { Constellation } from '@/components/ui/backgrounds/Constellation'
+import { Embers } from '@/components/ui/backgrounds/Embers'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
@@ -10,41 +10,16 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
-// 07 · 01 · O problema — fagulhas laranjas + brilho da base; "invisíveis" com glow laranja
+// 07 · O problema — fagulhas de fogueira fotorrealistas (Embers)
 export function Problema() {
   const { title, lead, phrases, insight } = PROBLEMA
   const { revealed, inView } = useSlide()
-  const reduceMotion = useReducedMotion()
   const insightStep = phrases.length + 1
   const showInsight = inView && revealed >= insightStep
 
-  const background = (
-    <>
-      <Constellation mode="ember" focusX={0.86} focusY={0.22} count={44} seed={11} />
-      {/* brilho laranja subindo da base — fade in/out conforme o slide entra/sai */}
-      <motion.div
-        className="absolute inset-x-0 bottom-0 h-[65%] pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: inView ? 1 : 0 }}
-        transition={{ duration: inView ? 0.8 : 0.4, ease: 'easeInOut' }}
-      >
-        <div
-          className="ember-pulse h-full w-full"
-          style={{
-            background:
-              'radial-gradient(ellipse 130% 55% at 50% 100%, rgba(249,115,22,0.32) 0%, rgba(249,115,22,0.14) 38%, rgba(249,115,22,0.04) 60%, transparent 75%)',
-          }}
-        />
-      </motion.div>
-    </>
-  )
-
   return (
-    <Slide background={background}>
-      {/* wrapper ember-glow: "invisíveis" recebe glow laranja pulsante via CSS */}
-      <div className="ember-glow">
-        <SlideHeader title={title} lead={lead} className="max-w-[1400px]" />
-      </div>
+    <Slide background={<Embers />}>
+      <SlideHeader title={title} lead={lead} className="max-w-[1400px]" />
 
       <ul className="mt-8 grid gap-3 lg:mt-12 lg:grid-cols-6 lg:grid-rows-2 lg:gap-6">
         {phrases.map((phrase, i) => {
