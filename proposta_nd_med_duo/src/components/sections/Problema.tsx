@@ -24,8 +24,7 @@ export function Problema() {
 
       {/* "INFERNO" em contorno — aparece com o slide, desfoca quando todos os cards estão visíveis */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 flex items-center justify-center overflow-hidden"
-        style={{ top: '37%' }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{
           opacity: inView ? 1 : 0,
@@ -37,10 +36,10 @@ export function Problema() {
         }}
       >
         <span
-          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[278px]"
+          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[420px]"
           style={{
-            lineHeight: 1,
-            letterSpacing: '0.44em',
+            lineHeight: 0.88,
+            letterSpacing: '0.08em',
             color: 'transparent',
             WebkitTextStroke: '1.5px rgb(255 72 0 / 0.42)',
           }}
