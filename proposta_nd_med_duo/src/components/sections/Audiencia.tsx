@@ -20,8 +20,29 @@ export function Audiencia() {
             <Reveal key={item.name} step={i + 1}>
               <figure className="flex items-end gap-4 lg:gap-6">
                 <div className="relative w-32 shrink-0 lg:w-[240px]">
-                  <div className="nd-ig-ring rounded-[19px] p-[2px] lg:rounded-[23px] lg:p-[3px]">
-                    <Media photo={item.media} className="aspect-[9/16] rounded-[17px] bg-surface-raised lg:rounded-[20px]" />
+                  <div className="nd-ig-ring overflow-hidden rounded-[19px] p-[2px] lg:rounded-[23px] lg:p-[3px]">
+                    {item.videoEmbed ? (
+                      <div
+                        className="relative aspect-[9/16] overflow-hidden rounded-[17px] bg-surface-raised lg:rounded-[20px]"
+                        style={{ transform: 'translateZ(0)' }}
+                      >
+                        <iframe
+                          src={item.videoEmbed}
+                          allow="autoplay"
+                          title={item.media.alt}
+                          style={{
+                            border: 'none',
+                            position: 'absolute',
+                            top: '-10%',
+                            left: '-10%',
+                            width: '120%',
+                            height: '120%',
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <Media photo={item.media} className="aspect-[9/16] rounded-[17px] bg-surface-raised lg:rounded-[20px]" />
+                    )}
                   </div>
                   <span className="absolute -right-3 -bottom-3 grid size-9 place-items-center rounded-full border border-line bg-surface text-orange lg:-right-4 lg:-bottom-4 lg:size-14">
                     <Icon aria-hidden className="size-4 lg:size-6" strokeWidth={2} />

@@ -228,6 +228,7 @@ export const AUDIENCIA = {
       caption: 'Paloma, gerente comercial de clínica parceira da ND',
       icon: Quote,
       media: { src: 'assets/audiencia-longlife.jpg', alt: 'Depoimento da Paloma, do Instituto LongLife', label: 'Thumb do depoimento' },
+      videoEmbed: 'https://drive.google.com/file/d/15fw-eqnbzePYJISuhCwKz6P4ZWVG3VVm/preview',
     },
   ],
   note: 'Conteúdos orgânicos gravados, editados e publicados pelos próprios profissionais.',
