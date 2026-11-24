@@ -22,29 +22,35 @@ export function Problema() {
     <>
       <Embers />
 
-      {/* "INFERNO" em contorno — aparece com o slide, desfoca quando o 1º card é revelado */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden">
-        <motion.span
-          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[490px]"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: showInsight ? 0 : (inView ? 1 : 0),
-            filter: allCardsRevealed ? 'blur(22px)' : 'blur(0px)',
-          }}
-          transition={{
-            opacity: { duration: 1.1, ease: 'easeOut' },
-            filter: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
-          }}
-          style={{
-            lineHeight: 0.88,
-            letterSpacing: '0',
-            color: 'transparent',
-            WebkitTextStroke: '1.5px rgb(255 72 0 / 0.42)',
-          }}
-        >
-          inferno
-        </motion.span>
-      </div>
+      {/* "INFERNO" em contorno — desmontado do DOM quando o insight aparece para não
+          criar stacking context visível através do backdrop-filter do overlay */}
+      <AnimatePresence>
+        {!showInsight && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden">
+            <motion.span
+              className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[490px]"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: inView ? 1 : 0,
+                filter: allCardsRevealed ? 'blur(22px)' : 'blur(0px)',
+              }}
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              transition={{
+                opacity: { duration: 1.1, ease: 'easeOut' },
+                filter: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
+              }}
+              style={{
+                lineHeight: 0.88,
+                letterSpacing: '0',
+                color: 'transparent',
+                WebkitTextStroke: '1.5px rgb(255 72 0 / 0.42)',
+              }}
+            >
+              inferno
+            </motion.span>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* brilho laranja na base */}
       <motion.div
@@ -100,7 +106,7 @@ export function Problema() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: EASE }}
           >
-            <div aria-hidden className="absolute inset-0 bg-surface-deep/65" />
+            <div aria-hidden className="absolute inset-0 bg-surface/55 backdrop-blur-xl" />
             <motion.div
               className="relative z-10 w-full max-w-[920px]"
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
