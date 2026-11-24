@@ -36,10 +36,10 @@ export function Problema() {
         }}
       >
         <span
-          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[420px]"
+          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[490px]"
           style={{
             lineHeight: 0.88,
-            letterSpacing: '0.08em',
+            letterSpacing: '0',
             color: 'transparent',
             WebkitTextStroke: '1.5px rgb(255 72 0 / 0.42)',
           }}
