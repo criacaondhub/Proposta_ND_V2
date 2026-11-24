@@ -4,7 +4,7 @@ import { Calendar, CalendarCheck, MessageCircle, Store } from 'lucide-react'
 import { VIRADA } from '@/config/content'
 import { useSlide } from '@/lib/deck'
 import { pad2 } from '@/lib/utils'
-import { Constellation } from '@/components/ui/backgrounds/Constellation'
+import { Stars } from '@/components/ui/backgrounds/Stars'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
@@ -79,31 +79,58 @@ function AnimatedIconBox({ icon: Icon, delay = 0 }: { icon: LucideIcon; delay?: 
   )
 }
 
-// 08 · A virada — rede azulada conectada + luz fria vindo do topo
+const EASE = [0.22, 1, 0.36, 1] as const
+
+// 08 · A virada — céu estrelado + "PARAÍSO" em contorno + luz fria no topo
 export function Virada() {
   const { title, moments, closing } = VIRADA
-  const { inView } = useSlide()
+  const { inView, revealed } = useSlide()
   const reduceMotion = useReducedMotion()
 
   const background = (
     <>
-      <Constellation mode="sky" focusX={0.5} focusY={0.5} count={100} seed={42} />
+      <Stars />
+
+      {/* "PARAÍSO" em contorno — desfoca após a aparição do primeiro card */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden">
+        <motion.span
+          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[490px]"
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: inView ? 1 : 0,
+            filter: revealed >= 1 ? 'blur(22px)' : 'blur(0px)',
+          }}
+          transition={{
+            opacity: { duration: 1.1, ease: 'easeOut' },
+            filter: { duration: 1.6, ease: EASE },
+          }}
+          style={{
+            lineHeight: 0.88,
+            letterSpacing: '0',
+            color: 'transparent',
+            WebkitTextStroke: '1.5px rgb(180 215 255 / 0.38)',
+          }}
+        >
+          paraíso
+        </motion.span>
+      </div>
+
       {/* luz fria no topo — entra suave quando o slide fica visível */}
       <motion.div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[55%]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[60%]"
         initial={{ opacity: 0 }}
         animate={{ opacity: inView ? 1 : 0 }}
-        transition={{ duration: reduceMotion ? 0 : 1, ease: 'easeOut' }}
+        transition={{ duration: reduceMotion ? 0 : 1.2, ease: 'easeOut' }}
         style={{
           background:
-            'radial-gradient(ellipse 80% 80% at 50% 0%, rgba(147,197,253,0.08) 0%, rgba(147,197,253,0.03) 50%, transparent 80%)',
+            'radial-gradient(ellipse 100% 90% at 50% 0%, rgba(147,197,253,0.14) 0%, rgba(100,160,255,0.06) 50%, transparent 80%)',
         }}
       />
     </>
   )
 
   return (
-    <Slide theme="light" background={background}>
+    <Slide background={background}>
       <SlideHeader title={title} />
 
       <div className="lg:my-auto lg:pt-6">
@@ -125,7 +152,7 @@ export function Virada() {
         </ol>
 
         <Reveal step={moments.length + 1} className="mt-4 lg:mt-10">
-          <div data-theme="dark" className="rounded-lg bg-brand-navy px-5 py-6 lg:px-12 lg:py-10">
+          <div className="rounded-lg bg-brand-navy px-5 py-6 lg:px-12 lg:py-10">
             <Title as="p" size="h3" text={closing} />
           </div>
         </Reveal>
