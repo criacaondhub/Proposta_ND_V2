@@ -100,7 +100,7 @@ export function Problema() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: EASE }}
           >
-            <div aria-hidden className="absolute inset-0 bg-surface/55 backdrop-blur-xl" />
+            <div aria-hidden className="absolute inset-0 bg-surface-deep/65" />
             <motion.div
               className="relative z-10 w-full max-w-[920px]"
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
