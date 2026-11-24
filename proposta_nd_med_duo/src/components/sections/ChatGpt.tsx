@@ -13,7 +13,7 @@ export function ChatGpt() {
   const { title, lead, items, proof } = CHATGPT
 
   return (
-    <Slide background={<PatternRail side="right" />}>
+    <Slide theme="light" background={<PatternRail side="right" tone="orange" />}>
       <div className="grid flex-1 gap-10 lg:grid-cols-12 lg:gap-8">
         <div className="flex flex-col lg:col-span-7">
           <SlideHeader title={title} lead={lead} size="title-sm" />
