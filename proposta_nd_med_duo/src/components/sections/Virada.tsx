@@ -2,8 +2,9 @@ import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import { Calendar, CalendarCheck, MessageCircle, Store } from 'lucide-react'
 import { VIRADA } from '@/config/content'
+import { useSlide } from '@/lib/deck'
 import { pad2 } from '@/lib/utils'
-import { PatternRail } from '@/components/ui/backgrounds/PatternRail'
+import { Constellation } from '@/components/ui/backgrounds/Constellation'
 import { Card } from '@/components/ui/Card'
 import { Reveal } from '@/components/ui/Reveal'
 import { Slide } from '@/components/ui/Slide'
@@ -78,12 +79,31 @@ function AnimatedIconBox({ icon: Icon, delay = 0 }: { icon: LucideIcon; delay?: 
   )
 }
 
-// 08 · A virada — timeline de 4 cards ligados por linha fina + faixa navy de fechamento
+// 08 · A virada — rede azulada conectada + luz fria vindo do topo
 export function Virada() {
   const { title, moments, closing } = VIRADA
+  const { inView } = useSlide()
+  const reduceMotion = useReducedMotion()
+
+  const background = (
+    <>
+      <Constellation mode="sky" focusX={0.5} focusY={0.5} count={100} seed={42} />
+      {/* luz fria no topo — entra suave quando o slide fica visível */}
+      <motion.div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[55%]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: inView ? 1 : 0 }}
+        transition={{ duration: reduceMotion ? 0 : 1, ease: 'easeOut' }}
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 80% at 50% 0%, rgba(147,197,253,0.08) 0%, rgba(147,197,253,0.03) 50%, transparent 80%)',
+        }}
+      />
+    </>
+  )
 
   return (
-    <Slide theme="light" background={<PatternRail side="right" tone="orange" />}>
+    <Slide theme="light" background={background}>
       <SlideHeader title={title} />
 
       <div className="lg:my-auto lg:pt-6">

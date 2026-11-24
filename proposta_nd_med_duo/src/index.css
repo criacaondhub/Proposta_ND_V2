@@ -296,6 +296,29 @@
     background: linear-gradient(45deg, #feda75, #fa7e1e 30%, #d62976 55%, #962fbf 80%, #4f5bd5);
   }
 
+  /* Slide 07 — brilho laranja na base respira lentamente */
+  .ember-pulse {
+    animation: ember-breathe 5s ease-in-out infinite;
+  }
+  @keyframes ember-breathe {
+    0%, 100% { opacity: 0.65; }
+    50%       { opacity: 1;    }
+  }
+
+  /* Slide 07 — "invisíveis" ganha glow laranja pulsante */
+  .ember-glow strong {
+    animation: ember-glow-pulse 4s ease-in-out infinite;
+  }
+  @keyframes ember-glow-pulse {
+    0%, 100% { text-shadow: 0 0 8px rgba(249, 115, 22, 0.35); }
+    50%      { text-shadow: 0 0 22px rgba(249, 115, 22, 0.75), 0 0 44px rgba(249, 115, 22, 0.25); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ember-pulse          { animation: none; opacity: 0.8; }
+    .ember-glow strong    { animation: none; text-shadow: 0 0 10px rgba(249, 115, 22, 0.4); }
+  }
+
   /* Célula da grade "agenda" */
   .nd-cell {
     border-radius: var(--radius-sm);
