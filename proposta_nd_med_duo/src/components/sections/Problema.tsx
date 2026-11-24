@@ -72,29 +72,35 @@ export function Problema() {
 
   return (
     <Slide background={background}>
-      <SlideHeader title={title} lead={lead} className="max-w-[1400px]" />
+      {/* blur aplicado diretamente no conteúdo — evita backdrop-filter e seus artefatos de stacking context */}
+      <motion.div
+        className="flex flex-col"
+        animate={{ filter: showInsight ? 'blur(8px)' : 'blur(0px)', opacity: showInsight ? 0.4 : 1 }}
+        transition={{ duration: 0.35, ease: EASE }}
+      >
+        <SlideHeader title={title} lead={lead} className="max-w-[1400px]" />
 
-      <ul className="mt-8 grid gap-3 lg:mt-12 lg:grid-cols-6 lg:grid-rows-2 lg:gap-6">
-        {phrases.map((phrase, i) => {
-          /* 3 em cima (cols 1-2, 3-4, 5-6) · 2 embaixo centralizadas (cols 2-3, 4-5) */
-          const placement = [
-            'lg:col-span-2 lg:col-start-1',
-            'lg:col-span-2 lg:col-start-3',
-            'lg:col-span-2 lg:col-start-5',
-            'lg:col-span-2 lg:col-start-2',
-            'lg:col-span-2 lg:col-start-4',
-          ][i]
-          return (
-            <Reveal as="li" key={phrase.quote} step={i + 1} className={`flex ${placement}`}>
-              <Card className="w-full border border-orange/15 bg-surface-raised/[.97] lg:p-8">
-                <MessageCircle aria-hidden className="size-6 text-orange lg:size-9" strokeWidth={1.75} />
-                <p className="mt-4 text-h4 text-ink lg:mt-6">"{phrase.quote}"</p>
-                <p className="mt-2 text-body-sm text-ink-muted lg:mt-3">{phrase.text}</p>
-              </Card>
-            </Reveal>
-          )
-        })}
-      </ul>
+        <ul className="mt-8 grid gap-3 lg:mt-12 lg:grid-cols-6 lg:grid-rows-2 lg:gap-6">
+          {phrases.map((phrase, i) => {
+            const placement = [
+              'lg:col-span-2 lg:col-start-1',
+              'lg:col-span-2 lg:col-start-3',
+              'lg:col-span-2 lg:col-start-5',
+              'lg:col-span-2 lg:col-start-2',
+              'lg:col-span-2 lg:col-start-4',
+            ][i]
+            return (
+              <Reveal as="li" key={phrase.quote} step={i + 1} className={`flex ${placement}`}>
+                <Card className="w-full border border-orange/15 bg-surface-raised/[.97] lg:p-8">
+                  <MessageCircle aria-hidden className="size-6 text-orange lg:size-9" strokeWidth={1.75} />
+                  <p className="mt-4 text-h4 text-ink lg:mt-6">"{phrase.quote}"</p>
+                  <p className="mt-2 text-body-sm text-ink-muted lg:mt-3">{phrase.text}</p>
+                </Card>
+              </Reveal>
+            )
+          })}
+        </ul>
+      </motion.div>
 
       <AnimatePresence>
         {showInsight && (
@@ -106,9 +112,8 @@ export function Problema() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: EASE }}
           >
-            <div aria-hidden className="absolute inset-0 bg-surface/55 backdrop-blur-xl" />
             <motion.div
-              className="relative z-10 w-full max-w-[920px]"
+              className="relative w-full max-w-[920px]"
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.98 }}
