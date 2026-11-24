@@ -65,9 +65,9 @@ function createParticles(
         vx: 0,
         // labaradas sobem mais devagar; fagulhas são mais rápidas e variadas
         vy: isFlame ? -(0.003 + rand() * 0.007) : -(0.006 + rand() * 0.014),
-        // labaradas grandes; fagulhas bem pequenas
-        r: isFlame ? 5 + rand() * 11 : 0.6 + rand() * 1.8,
-        a: isFlame ? 0.45 + rand() * 0.40 : 0.20 + rand() * 0.60,
+        // labaradas: elipse alongada (ry = r*2.1); fagulhas: ponto com halo
+        r: isFlame ? 4 + rand() * 8 : 0.5 + rand() * 1.4,
+        a: isFlame ? 0.30 + rand() * 0.35 : 0.25 + rand() * 0.55,
         bright: !isFlame && rand() < 0.20,
         phase: rand() * Math.PI * 2,
         sineFreq: isFlame ? 0.4 + rand() * 0.6 : 0.25 + rand() * 0.45,
@@ -135,7 +135,8 @@ export function Constellation({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
-    const drawFlame = (
+    // Labarada como blob de luz — elipse com gradiente radial, sem contorno
+    const drawEmberBlob = (
       x: number,
       y: number,
       r: number,
@@ -144,38 +145,33 @@ export function Constellation({
       rotation: number,
       sc: number,
     ) => {
-      const h = r * 3.2 * sc  // altura da labarada
-      const w = r * 1.05 * sc // largura na base
+      const rx = r * 0.7 * sc
+      const ry = r * 2.1 * sc
 
       ctx.save()
       ctx.translate(x, y)
       ctx.rotate(rotation)
 
-      // Halo suave (glow ao redor da labarada)
-      const glow = ctx.createLinearGradient(0, h * 0.4, 0, -h * 0.7)
-      glow.addColorStop(0, `rgba(255, 130, 20, ${(alpha * 0.18).toFixed(3)})`)
-      glow.addColorStop(1, 'rgba(200, 40, 5, 0)')
-      ctx.fillStyle = glow
+      // difusão exterior — halo amplo e quase invisível
+      const halo = ctx.createRadialGradient(0, -ry * 0.1, 0, 0, 0, ry * 1.6)
+      halo.addColorStop(0,   `rgba(255, 130, 20, ${(alpha * 0.14).toFixed(3)})`)
+      halo.addColorStop(0.5, `rgba(210, 55, 8,  ${(alpha * 0.05).toFixed(3)})`)
+      halo.addColorStop(1,   'rgba(150, 18, 4, 0)')
+      ctx.fillStyle = halo
       ctx.beginPath()
-      ctx.moveTo(0, h * 0.6)
-      ctx.bezierCurveTo( w * 1.7, h * 0.1,  w * 0.9, -h * 0.7, 0, -h * 0.9)
-      ctx.bezierCurveTo(-w * 0.9, -h * 0.7, -w * 1.7, h * 0.1, 0, h * 0.6)
-      ctx.closePath()
+      ctx.ellipse(0, 0, rx * 2.2, ry * 1.6, 0, 0, Math.PI * 2)
       ctx.fill()
 
-      // Corpo da labarada com gradiente amarelo→laranja→transparente
-      const g2 = Math.round(170 + tint * 65) // 170–235 (mais amarelo quando tint=1)
-      const grad = ctx.createLinearGradient(0, h * 0.35, 0, -h * 0.65)
-      grad.addColorStop(0,    `rgba(255, ${g2}, 25, ${alpha.toFixed(3)})`)
-      grad.addColorStop(0.35, `rgba(249, ${Math.round(90 + tint * 65)}, 15, ${(alpha * 0.75).toFixed(3)})`)
-      grad.addColorStop(0.75, `rgba(220, 50, 8, ${(alpha * 0.35).toFixed(3)})`)
-      grad.addColorStop(1,    'rgba(180, 25, 5, 0)')
+      // núcleo: amarelo-quente → laranja → vermelho-escuro → transparente
+      const g2 = Math.round(185 + tint * 70)
+      const grad = ctx.createRadialGradient(0, -ry * 0.15, 0, 0, 0, ry)
+      grad.addColorStop(0,    `rgba(255, ${g2}, 90, ${alpha.toFixed(3)})`)
+      grad.addColorStop(0.3,  `rgba(255, ${Math.round(100 + tint * 55)}, 20, ${(alpha * 0.78).toFixed(3)})`)
+      grad.addColorStop(0.62, `rgba(210, 42, 6, ${(alpha * 0.30).toFixed(3)})`)
+      grad.addColorStop(1,    'rgba(140, 10, 3, 0)')
       ctx.fillStyle = grad
       ctx.beginPath()
-      ctx.moveTo(0, h * 0.35)
-      ctx.bezierCurveTo( w, h * 0.05,  w * 0.5, -h * 0.50, 0, -h * 0.65)
-      ctx.bezierCurveTo(-w * 0.5, -h * 0.50, -w, h * 0.05, 0, h * 0.35)
-      ctx.closePath()
+      ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2)
       ctx.fill()
 
       ctx.restore()
@@ -218,22 +214,19 @@ export function Constellation({
           if (alpha < 0.01) continue
 
           if (p.isFlame) {
-            drawFlame(x, y, p.r, alpha, p.tint, p.rotation, sc)
+            drawEmberBlob(x, y, p.r, alpha, p.tint, p.rotation, sc)
           } else {
-            // Fagulha: círculo pequeno com cor variada
-            const cr = Math.round(235 + p.tint * 20)
-            const cg = Math.round(70 + p.tint * 120)
-            const cb = Math.round(10 + p.tint * 50)
-            const a = alpha.toFixed(3)
-            if (p.bright) {
-              ctx.shadowBlur = 5 * sc
-              ctx.shadowColor = `rgba(255, 160, 30, ${(alpha * 0.6).toFixed(3)})`
-            }
-            ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${a})`
+            // Fagulha: ponto quente com halo radial suave, sem borda dura
+            const sparkR = p.r * sc * 3.5
+            const sg = Math.round(90 + p.tint * 110)
+            const sparkGrad = ctx.createRadialGradient(x, y, 0, x, y, sparkR)
+            sparkGrad.addColorStop(0,    `rgba(255, ${Math.min(255, sg + 60)}, 70, ${alpha.toFixed(3)})`)
+            sparkGrad.addColorStop(0.35, `rgba(255, ${sg}, 15, ${(alpha * 0.60).toFixed(3)})`)
+            sparkGrad.addColorStop(1,    'rgba(190, 35, 5, 0)')
+            ctx.fillStyle = sparkGrad
             ctx.beginPath()
-            ctx.arc(x, y, p.r * sc, 0, Math.PI * 2)
+            ctx.arc(x, y, sparkR, 0, Math.PI * 2)
             ctx.fill()
-            if (ctx.shadowBlur !== 0) ctx.shadowBlur = 0
           }
         } else if (mode === 'sky') {
           const colorStr = p.bright
