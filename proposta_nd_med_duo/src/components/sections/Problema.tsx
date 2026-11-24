@@ -20,7 +20,7 @@ export function Problema() {
 
   const background = (
     <>
-      <Constellation mode="ember" focusX={0.86} focusY={0.22} count={110} seed={11} />
+      <Constellation mode="ember" focusX={0.86} focusY={0.22} count={44} seed={11} />
       {/* brilho laranja subindo da base — fade in/out conforme o slide entra/sai */}
       <motion.div
         className="absolute inset-x-0 bottom-0 h-[65%] pointer-events-none"
@@ -32,7 +32,7 @@ export function Problema() {
           className="ember-pulse h-full w-full"
           style={{
             background:
-              'radial-gradient(ellipse 100% 100% at 50% 100%, rgba(249,115,22,0.18) 0%, rgba(249,115,22,0.07) 45%, transparent 72%)',
+              'radial-gradient(ellipse 130% 55% at 50% 100%, rgba(249,115,22,0.32) 0%, rgba(249,115,22,0.14) 38%, rgba(249,115,22,0.04) 60%, transparent 75%)',
           }}
         />
       </motion.div>
@@ -58,7 +58,7 @@ export function Problema() {
           ][i]
           return (
             <Reveal as="li" key={phrase.quote} step={i + 1} className={`flex ${placement}`}>
-              <Card className="w-full border border-orange/15 lg:p-8">
+              <Card className="w-full border border-orange/15 bg-surface-raised/[.97] lg:p-8">
                 <MessageCircle aria-hidden className="size-6 text-orange lg:size-9" strokeWidth={1.75} />
                 <p className="mt-4 text-h4 text-ink lg:mt-6">"{phrase.quote}"</p>
                 <p className="mt-2 text-body-sm text-ink-muted lg:mt-3">{phrase.text}</p>

@@ -11,7 +11,7 @@ interface ConstellationProps {
   focusY?: number
   count?: number
   seed?: number
-  /** 'default' = rede slate; 'ember' = fagulhas laranjas subindo; 'sky' = rede fria azulada */
+  /** 'default' = rede slate; 'ember' = fagulhas laranjas no terço inferior; 'sky' = rede fria azulada */
   mode?: ConstellationMode
   className?: string
 }
@@ -24,6 +24,14 @@ interface Particle {
   r: number
   a: number
   bright: boolean
+  /** ember: fase da oscilação senoidal lateral */
+  phase: number
+  /** ember: frequência da oscilação (ciclos/s) */
+  sineFreq: number
+  /** ember: amplitude da velocidade lateral */
+  sineAmp: number
+  /** ember: 0 = laranja profundo, 1 = amarelo-laranja */
+  tint: number
 }
 
 function mulberry32(seed: number) {
@@ -45,24 +53,41 @@ function createParticles(
 ): Particle[] {
   const rand = mulberry32(seed)
   const gauss = () => Math.sqrt(-2 * Math.log(rand() || 1e-6)) * Math.cos(2 * Math.PI * rand())
+
   return Array.from({ length: count }, (_, i): Particle => {
     const isEmber = mode === 'ember'
-    const core = !isEmber && i < count * 0.6
-    const x = core ? focusX + gauss() * 0.16 : rand()
-    const y = core ? focusY + gauss() * 0.2 : rand()
-    const baseSpeed = isEmber ? 0.004 : mode === 'sky' ? 0.005 : 0.008
-    const vx = (rand() - 0.5) * baseSpeed
-    const vy = isEmber
-      ? -(0.012 + rand() * 0.018) // sempre sobe
-      : (rand() - 0.5) * baseSpeed
+
+    if (isEmber) {
+      // Nasce concentrado no terço inferior (y ∈ [0.65, 1.0])
+      return {
+        x: rand(),
+        y: 0.65 + rand() * 0.35,
+        vx: 0,
+        vy: -(0.005 + rand() * 0.010), // lenta subida; velocidades diferentes entre si
+        r: 0.7 + rand() * 2.3,          // 0.7 – 3.0 px
+        a: 0.2 + rand() * 0.6,          // 0.2 – 0.8
+        bright: rand() < 0.18,          // poucas maiores e mais brilhantes
+        phase: rand() * Math.PI * 2,
+        sineFreq: 0.25 + rand() * 0.45, // 0.25 – 0.70 Hz — deriva lenta
+        sineAmp: 0.012 + rand() * 0.016, // amplitude de oscilação lateral
+        tint: rand(),                    // 0 = laranja profundo, 1 = amarelado
+      }
+    }
+
+    const core = i < count * 0.6
+    const baseSpeed = mode === 'sky' ? 0.005 : 0.008
     return {
-      x,
-      y,
-      vx,
-      vy,
-      r: isEmber ? 1.0 + rand() * 2.2 : 0.8 + rand() * 1.4,
-      a: 0.4 + rand() * 0.5,
-      bright: rand() < (isEmber ? 0.25 : 0.14),
+      x: core ? focusX + gauss() * 0.16 : rand(),
+      y: core ? focusY + gauss() * 0.2 : rand(),
+      vx: (rand() - 0.5) * baseSpeed,
+      vy: (rand() - 0.5) * baseSpeed,
+      r: 0.8 + rand() * 1.4,
+      a: 0.35 + rand() * 0.55,
+      bright: rand() < 0.14,
+      phase: 0,
+      sineFreq: 0,
+      sineAmp: 0,
+      tint: 0,
     }
   })
 }
@@ -97,6 +122,7 @@ export function Constellation({
     let height = 0
     let frame = 0
     let last = performance.now()
+    let time = 0 // tempo acumulado para cálculo senoidal
 
     const resize = () => {
       width = host.offsetWidth
@@ -136,39 +162,64 @@ export function Constellation({
       // Partículas
       for (const { x, y, p } of pts) {
         let colorStr: string
+
         if (mode === 'ember') {
-          const topFade = Math.min(1, p.y / 0.22)
-          const alpha = (p.a * Math.max(0, topFade)).toFixed(3)
-          colorStr = p.bright ? `rgba(255, 160, 50, ${alpha})` : `rgba(249, 100, 20, ${alpha})`
+          // O canvas já é mascarado; topFade como camada extra de segurança
+          const topFade = Math.min(1, p.y / 0.45)
+          const alpha = +(p.a * Math.max(0, topFade)).toFixed(3)
+          if (alpha <= 0) continue
+
+          // Cor varia de laranja profundo (tint=0) → amarelo-laranja (tint=1)
+          const cr = Math.round(235 + p.tint * 20)  // 235-255
+          const cg = Math.round(72 + p.tint * 118)  // 72-190
+          const cb = Math.round(12 + p.tint * 48)   // 12-60
+          colorStr = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`
+
+          // Partículas grandes e brilhantes ganham glow (halo suave via shadowBlur)
+          if (p.bright && p.r > 1.8) {
+            ctx.shadowBlur = 7 * scale
+            ctx.shadowColor = `rgba(255, 140, 30, ${(alpha * 0.55).toFixed(3)})`
+          }
         } else if (mode === 'sky') {
           colorStr = p.bright
             ? `rgba(220, 232, 255, ${p.a.toFixed(3)})`
             : `rgba(185, 205, 240, ${(p.a * 0.8).toFixed(3)})`
         } else {
-          colorStr = p.bright ? `rgba(249, 251, 255, ${p.a})` : `rgba(185, 195, 220, ${(p.a * 0.8).toFixed(3)})`
+          colorStr = p.bright
+            ? `rgba(249, 251, 255, ${p.a})`
+            : `rgba(185, 195, 220, ${(p.a * 0.8).toFixed(3)})`
         }
+
         ctx.fillStyle = colorStr
         ctx.beginPath()
         ctx.arc(x, y, p.r * Math.max(0.7, scale), 0, Math.PI * 2)
         ctx.fill()
+
+        // Reseta o glow para não contaminar a próxima partícula
+        if (ctx.shadowBlur !== 0) ctx.shadowBlur = 0
       }
     }
 
     const step = (now: number) => {
       const dt = Math.min((now - last) / 1000, 0.05)
       last = now
+      time += dt
+
       if (mode === 'ember') {
         for (const p of particles) {
-          p.x += p.vx * dt
-          p.y += p.vy * dt // vy < 0 → sobe
-          if (p.y < -0.08) {
-            p.y = 1.02 + Math.random() * 0.12
+          // Subida lenta
+          p.y += p.vy * dt
+          // Oscilação senoidal lateral — sem trajetória reta
+          p.x += Math.sin(time * p.sineFreq * Math.PI * 2 + p.phase) * p.sineAmp * dt
+          // Reinicia na base ao sair pelo topo
+          if (p.y < -0.06) {
+            p.y = 0.70 + Math.random() * 0.28
             p.x = Math.random()
-            p.a = 0.4 + Math.random() * 0.5
-            p.vx = (Math.random() - 0.5) * 0.006
+            p.a = 0.2 + Math.random() * 0.6
+            p.vy = -(0.005 + Math.random() * 0.010)
           }
-          if (p.x < -0.08) p.x = 1.08
-          if (p.x > 1.08) p.x = -0.08
+          if (p.x < -0.05) p.x = 1.05
+          if (p.x > 1.05) p.x = -0.05
         }
       } else {
         for (const p of particles) {
@@ -199,9 +250,10 @@ export function Constellation({
     }
   }, [particles, playing, mode])
 
+  // Máscara vertical para ember: partículas somem bem antes da metade do slide
   const maskImage =
     mode === 'ember'
-      ? 'linear-gradient(to top, black 0%, black 55%, rgba(0,0,0,0.5) 75%, transparent 92%)'
+      ? 'linear-gradient(to top, black 0%, black 22%, rgba(0,0,0,0.65) 38%, rgba(0,0,0,0.12) 50%, transparent 60%)'
       : mode === 'sky'
         ? 'radial-gradient(ellipse 85% 85% at 50% 50%, black 15%, rgba(0,0,0,0.55) 55%, transparent 85%)'
         : `radial-gradient(ellipse 60% 70% at ${Math.round(focusX * 100)}% ${Math.round(focusY * 100)}%, black 0%, rgb(0 0 0 / 0.6) 45%, transparent 80%)`
