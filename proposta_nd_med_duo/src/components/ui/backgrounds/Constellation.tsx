@@ -6,12 +6,10 @@ import { cn } from '@/lib/utils'
 export type ConstellationMode = 'default' | 'ember' | 'sky'
 
 interface ConstellationProps {
-  /** centro do núcleo denso, em fração da largura/altura */
   focusX?: number
   focusY?: number
   count?: number
   seed?: number
-  /** 'default' = rede slate; 'ember' = fagulhas laranjas no terço inferior; 'sky' = rede fria azulada */
   mode?: ConstellationMode
   className?: string
 }
@@ -24,14 +22,16 @@ interface Particle {
   r: number
   a: number
   bright: boolean
-  /** ember: fase da oscilação senoidal lateral */
   phase: number
-  /** ember: frequência da oscilação (ciclos/s) */
   sineFreq: number
-  /** ember: amplitude da velocidade lateral */
   sineAmp: number
-  /** ember: 0 = laranja profundo, 1 = amarelo-laranja */
   tint: number
+  /** ember: labarada (teardrop) vs fagulha (circle) */
+  isFlame: boolean
+  /** ember: ângulo de inclinação atual (oscila para simular tremular) */
+  rotation: number
+  /** ember: velocidade de rotação de base */
+  rotVel: number
 }
 
 function mulberry32(seed: number) {
@@ -55,22 +55,27 @@ function createParticles(
   const gauss = () => Math.sqrt(-2 * Math.log(rand() || 1e-6)) * Math.cos(2 * Math.PI * rand())
 
   return Array.from({ length: count }, (_, i): Particle => {
-    const isEmber = mode === 'ember'
+    if (mode === 'ember') {
+      const isFlame = rand() < 0.4 // 40% labaradas, 60% fagulhas
 
-    if (isEmber) {
-      // Nasce concentrado no terço inferior (y ∈ [0.65, 1.0])
       return {
-        x: rand(),
-        y: 0.65 + rand() * 0.35,
+        // labaradas concentradas no centro-baixo; fagulhas mais espalhadas
+        x: isFlame ? 0.2 + rand() * 0.6 : rand(),
+        y: isFlame ? 0.78 + rand() * 0.20 : 0.70 + rand() * 0.28,
         vx: 0,
-        vy: -(0.005 + rand() * 0.010), // lenta subida; velocidades diferentes entre si
-        r: 0.7 + rand() * 2.3,          // 0.7 – 3.0 px
-        a: 0.2 + rand() * 0.6,          // 0.2 – 0.8
-        bright: rand() < 0.18,          // poucas maiores e mais brilhantes
+        // labaradas sobem mais devagar; fagulhas são mais rápidas e variadas
+        vy: isFlame ? -(0.003 + rand() * 0.007) : -(0.006 + rand() * 0.014),
+        // labaradas grandes; fagulhas bem pequenas
+        r: isFlame ? 5 + rand() * 11 : 0.6 + rand() * 1.8,
+        a: isFlame ? 0.45 + rand() * 0.40 : 0.20 + rand() * 0.60,
+        bright: !isFlame && rand() < 0.20,
         phase: rand() * Math.PI * 2,
-        sineFreq: 0.25 + rand() * 0.45, // 0.25 – 0.70 Hz — deriva lenta
-        sineAmp: 0.012 + rand() * 0.016, // amplitude de oscilação lateral
-        tint: rand(),                    // 0 = laranja profundo, 1 = amarelado
+        sineFreq: isFlame ? 0.4 + rand() * 0.6 : 0.25 + rand() * 0.45,
+        sineAmp: isFlame ? 0.006 + rand() * 0.010 : 0.012 + rand() * 0.016,
+        tint: rand(),
+        isFlame,
+        rotation: (rand() - 0.5) * 0.6,
+        rotVel: (rand() - 0.5) * 1.8,
       }
     }
 
@@ -84,10 +89,8 @@ function createParticles(
       r: 0.8 + rand() * 1.4,
       a: 0.35 + rand() * 0.55,
       bright: rand() < 0.14,
-      phase: 0,
-      sineFreq: 0,
-      sineAmp: 0,
-      tint: 0,
+      phase: 0, sineFreq: 0, sineAmp: 0, tint: 0,
+      isFlame: false, rotation: 0, rotVel: 0,
     }
   })
 }
@@ -122,7 +125,7 @@ export function Constellation({
     let height = 0
     let frame = 0
     let last = performance.now()
-    let time = 0 // tempo acumulado para cálculo senoidal
+    let time = 0
 
     const resize = () => {
       width = host.offsetWidth
@@ -132,9 +135,56 @@ export function Constellation({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
+    const drawFlame = (
+      x: number,
+      y: number,
+      r: number,
+      alpha: number,
+      tint: number,
+      rotation: number,
+      sc: number,
+    ) => {
+      const h = r * 3.2 * sc  // altura da labarada
+      const w = r * 1.05 * sc // largura na base
+
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.rotate(rotation)
+
+      // Halo suave (glow ao redor da labarada)
+      const glow = ctx.createLinearGradient(0, h * 0.4, 0, -h * 0.7)
+      glow.addColorStop(0, `rgba(255, 130, 20, ${(alpha * 0.18).toFixed(3)})`)
+      glow.addColorStop(1, 'rgba(200, 40, 5, 0)')
+      ctx.fillStyle = glow
+      ctx.beginPath()
+      ctx.moveTo(0, h * 0.6)
+      ctx.bezierCurveTo( w * 1.7, h * 0.1,  w * 0.9, -h * 0.7, 0, -h * 0.9)
+      ctx.bezierCurveTo(-w * 0.9, -h * 0.7, -w * 1.7, h * 0.1, 0, h * 0.6)
+      ctx.closePath()
+      ctx.fill()
+
+      // Corpo da labarada com gradiente amarelo→laranja→transparente
+      const g2 = Math.round(170 + tint * 65) // 170–235 (mais amarelo quando tint=1)
+      const grad = ctx.createLinearGradient(0, h * 0.35, 0, -h * 0.65)
+      grad.addColorStop(0,    `rgba(255, ${g2}, 25, ${alpha.toFixed(3)})`)
+      grad.addColorStop(0.35, `rgba(249, ${Math.round(90 + tint * 65)}, 15, ${(alpha * 0.75).toFixed(3)})`)
+      grad.addColorStop(0.75, `rgba(220, 50, 8, ${(alpha * 0.35).toFixed(3)})`)
+      grad.addColorStop(1,    'rgba(180, 25, 5, 0)')
+      ctx.fillStyle = grad
+      ctx.beginPath()
+      ctx.moveTo(0, h * 0.35)
+      ctx.bezierCurveTo( w, h * 0.05,  w * 0.5, -h * 0.50, 0, -h * 0.65)
+      ctx.bezierCurveTo(-w * 0.5, -h * 0.50, -w, h * 0.05, 0, h * 0.35)
+      ctx.closePath()
+      ctx.fill()
+
+      ctx.restore()
+    }
+
     const draw = () => {
       ctx.clearRect(0, 0, width, height)
       const scale = Math.max(width, height * (16 / 9)) / 1920
+      const sc = Math.max(0.7, scale)
       const pts = particles.map((p) => ({ x: p.x * width, y: p.y * height, p }))
 
       // Linhas — apenas nos modos default e sky
@@ -161,42 +211,46 @@ export function Constellation({
 
       // Partículas
       for (const { x, y, p } of pts) {
-        let colorStr: string
-
         if (mode === 'ember') {
-          // O canvas já é mascarado; topFade como camada extra de segurança
-          const topFade = Math.min(1, p.y / 0.45)
-          const alpha = +(p.a * Math.max(0, topFade)).toFixed(3)
-          if (alpha <= 0) continue
+          // Fade extra via posição (máscara CSS já cobre a maior parte)
+          const topFade = Math.min(1, p.y / 0.42)
+          const alpha = p.a * Math.max(0, topFade)
+          if (alpha < 0.01) continue
 
-          // Cor varia de laranja profundo (tint=0) → amarelo-laranja (tint=1)
-          const cr = Math.round(235 + p.tint * 20)  // 235-255
-          const cg = Math.round(72 + p.tint * 118)  // 72-190
-          const cb = Math.round(12 + p.tint * 48)   // 12-60
-          colorStr = `rgba(${cr}, ${cg}, ${cb}, ${alpha})`
-
-          // Partículas grandes e brilhantes ganham glow (halo suave via shadowBlur)
-          if (p.bright && p.r > 1.8) {
-            ctx.shadowBlur = 7 * scale
-            ctx.shadowColor = `rgba(255, 140, 30, ${(alpha * 0.55).toFixed(3)})`
+          if (p.isFlame) {
+            drawFlame(x, y, p.r, alpha, p.tint, p.rotation, sc)
+          } else {
+            // Fagulha: círculo pequeno com cor variada
+            const cr = Math.round(235 + p.tint * 20)
+            const cg = Math.round(70 + p.tint * 120)
+            const cb = Math.round(10 + p.tint * 50)
+            const a = alpha.toFixed(3)
+            if (p.bright) {
+              ctx.shadowBlur = 5 * sc
+              ctx.shadowColor = `rgba(255, 160, 30, ${(alpha * 0.6).toFixed(3)})`
+            }
+            ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${a})`
+            ctx.beginPath()
+            ctx.arc(x, y, p.r * sc, 0, Math.PI * 2)
+            ctx.fill()
+            if (ctx.shadowBlur !== 0) ctx.shadowBlur = 0
           }
         } else if (mode === 'sky') {
-          colorStr = p.bright
+          const colorStr = p.bright
             ? `rgba(220, 232, 255, ${p.a.toFixed(3)})`
             : `rgba(185, 205, 240, ${(p.a * 0.8).toFixed(3)})`
+          ctx.fillStyle = colorStr
+          ctx.beginPath()
+          ctx.arc(x, y, p.r * Math.max(0.7, scale), 0, Math.PI * 2)
+          ctx.fill()
         } else {
-          colorStr = p.bright
+          ctx.fillStyle = p.bright
             ? `rgba(249, 251, 255, ${p.a})`
             : `rgba(185, 195, 220, ${(p.a * 0.8).toFixed(3)})`
+          ctx.beginPath()
+          ctx.arc(x, y, p.r * Math.max(0.7, scale), 0, Math.PI * 2)
+          ctx.fill()
         }
-
-        ctx.fillStyle = colorStr
-        ctx.beginPath()
-        ctx.arc(x, y, p.r * Math.max(0.7, scale), 0, Math.PI * 2)
-        ctx.fill()
-
-        // Reseta o glow para não contaminar a próxima partícula
-        if (ctx.shadowBlur !== 0) ctx.shadowBlur = 0
       }
     }
 
@@ -207,19 +261,22 @@ export function Constellation({
 
       if (mode === 'ember') {
         for (const p of particles) {
-          // Subida lenta
           p.y += p.vy * dt
-          // Oscilação senoidal lateral — sem trajetória reta
+          // Oscilação senoidal lateral
           p.x += Math.sin(time * p.sineFreq * Math.PI * 2 + p.phase) * p.sineAmp * dt
-          // Reinicia na base ao sair pelo topo
-          if (p.y < -0.06) {
-            p.y = 0.70 + Math.random() * 0.28
-            p.x = Math.random()
-            p.a = 0.2 + Math.random() * 0.6
-            p.vy = -(0.005 + Math.random() * 0.010)
+          // Rotação oscilante (tremular da chama)
+          p.rotation += p.rotVel * dt
+          p.rotation += Math.sin(time * p.sineFreq * 2.2 * Math.PI + p.phase + 1.1) * 0.9 * dt
+
+          if (p.y < -0.08) {
+            p.y = p.isFlame ? 0.78 + Math.random() * 0.20 : 0.70 + Math.random() * 0.28
+            p.x = p.isFlame ? 0.2 + Math.random() * 0.6 : Math.random()
+            p.a = p.isFlame ? 0.45 + Math.random() * 0.40 : 0.20 + Math.random() * 0.60
+            p.vy = p.isFlame ? -(0.003 + Math.random() * 0.007) : -(0.006 + Math.random() * 0.014)
+            p.rotation = (Math.random() - 0.5) * 0.6
           }
-          if (p.x < -0.05) p.x = 1.05
-          if (p.x > 1.05) p.x = -0.05
+          if (p.x < -0.06) p.x = 1.06
+          if (p.x > 1.06) p.x = -0.06
         }
       } else {
         for (const p of particles) {
@@ -250,7 +307,6 @@ export function Constellation({
     }
   }, [particles, playing, mode])
 
-  // Máscara vertical para ember: partículas somem bem antes da metade do slide
   const maskImage =
     mode === 'ember'
       ? 'linear-gradient(to top, black 0%, black 22%, rgba(0,0,0,0.65) 38%, rgba(0,0,0,0.12) 50%, transparent 60%)'
