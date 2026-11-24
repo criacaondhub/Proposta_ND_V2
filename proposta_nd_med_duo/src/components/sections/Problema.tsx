@@ -16,7 +16,7 @@ export function Problema() {
   const { revealed, inView } = useSlide()
   const insightStep = phrases.length + 1
   const showInsight = inView && revealed >= insightStep
-  const allCardsRevealed = revealed >= phrases.length
+  const allCardsRevealed = revealed >= 1
 
   const background = (
     <>
