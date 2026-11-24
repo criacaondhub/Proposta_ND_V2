@@ -22,9 +22,9 @@ interface Spark {
 
 // Layer configs: back (sharp) · mid (soft) · front (bokeh)
 const LAYER_CFG = [
-  { rMin: 0.5, rMax: 1.5,  aMin: 0.40, aMax: 0.90, vyMin: 0.030, vyMax: 0.075 },
-  { rMin: 1.0, rMax: 2.2,  aMin: 0.22, aMax: 0.52, vyMin: 0.060, vyMax: 0.120 },
-  { rMin: 4.0, rMax: 11.0, aMin: 0.09, aMax: 0.26, vyMin: 0.090, vyMax: 0.170 },
+  { rMin: 0.5, rMax: 1.5,  aMin: 0.55, aMax: 1.00, vyMin: 0.030, vyMax: 0.075 },
+  { rMin: 1.0, rMax: 2.2,  aMin: 0.32, aMax: 0.68, vyMin: 0.060, vyMax: 0.120 },
+  { rMin: 4.0, rMax: 11.0, aMin: 0.14, aMax: 0.36, vyMin: 0.090, vyMax: 0.170 },
 ] as const
 
 function mulberry32(seed: number) {
@@ -124,7 +124,7 @@ export function Embers({ count = 110 }: { count?: number }) {
         const sx = s.x * width
         const sy = s.y * height
         // Fade as sparks rise — full at y=0.65, zero at top
-        const heightFade = Math.max(0, Math.min(1, s.y / 0.65))
+        const heightFade = Math.max(0, Math.min(1, s.y / 0.78))
         // Twinkle only on sharp layer 0 sparks
         const twinkle = s.layer === 0
           ? 0.28 + 0.72 * (0.5 + 0.5 * Math.sin(time * s.twinkleFreq * Math.PI * 2 + s.phase))
@@ -208,7 +208,7 @@ export function Embers({ count = 110 }: { count?: number }) {
   }, [playing])  // sparks are in a ref — intentionally excluded
 
   // Fade sparks near very top so they don't fight with the slide header
-  const maskImage = 'linear-gradient(to top, black 0%, black 18%, rgba(0,0,0,0.55) 48%, rgba(0,0,0,0.12) 70%, transparent 88%)'
+  const maskImage = 'linear-gradient(to top, black 0%, black 22%, rgba(0,0,0,0.70) 52%, rgba(0,0,0,0.22) 74%, transparent 90%)'
 
   return (
     <div
