@@ -22,21 +22,19 @@ export function Problema() {
     <>
       <Embers />
 
-      {/* "INFERNO" em contorno — aparece com o slide, desfoca quando todos os cards estão visíveis */}
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: inView ? 1 : 0,
-          filter: allCardsRevealed ? 'blur(22px)' : 'blur(0px)',
-        }}
-        transition={{
-          opacity: { duration: 1.1, ease: 'easeOut' },
-          filter: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
-        }}
-      >
-        <span
+      {/* "INFERNO" em contorno — aparece com o slide, desfoca quando o 1º card é revelado */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden">
+        <motion.span
           className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[490px]"
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: inView ? 1 : 0,
+            filter: allCardsRevealed ? 'blur(22px)' : 'blur(0px)',
+          }}
+          transition={{
+            opacity: { duration: 1.1, ease: 'easeOut' },
+            filter: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
+          }}
           style={{
             lineHeight: 0.88,
             letterSpacing: '0',
@@ -45,8 +43,8 @@ export function Problema() {
           }}
         >
           inferno
-        </span>
-      </motion.div>
+        </motion.span>
+      </div>
 
       {/* brilho laranja na base */}
       <motion.div
