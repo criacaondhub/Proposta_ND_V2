@@ -28,7 +28,7 @@ export function Problema() {
           className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[490px]"
           initial={{ opacity: 0 }}
           animate={{
-            opacity: inView ? 1 : 0,
+            opacity: showInsight ? 0 : (inView ? 1 : 0),
             filter: allCardsRevealed ? 'blur(22px)' : 'blur(0px)',
           }}
           transition={{
