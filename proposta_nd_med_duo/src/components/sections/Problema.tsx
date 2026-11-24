@@ -10,16 +10,46 @@ import { SlideHeader } from '@/components/ui/Typography'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
-// 07 · O problema — fagulhas de fogueira + brilho laranja na base
+// 07 · O problema — fagulhas de fogueira + "INFERNO" em contorno + brilho laranja na base
 export function Problema() {
   const { title, lead, phrases, insight } = PROBLEMA
   const { revealed, inView } = useSlide()
   const insightStep = phrases.length + 1
   const showInsight = inView && revealed >= insightStep
+  const allCardsRevealed = revealed >= phrases.length
 
   const background = (
     <>
       <Embers />
+
+      {/* "INFERNO" em contorno — aparece com o slide, desfoca quando todos os cards estão visíveis */}
+      <motion.div
+        className="pointer-events-none absolute inset-x-0 flex items-center justify-center overflow-hidden"
+        style={{ top: '37%' }}
+        initial={{ opacity: 0 }}
+        animate={{
+          opacity: inView ? 1 : 0,
+          filter: allCardsRevealed ? 'blur(22px)' : 'blur(0px)',
+        }}
+        transition={{
+          opacity: { duration: 1.1, ease: 'easeOut' },
+          filter: { duration: 1.6, ease: [0.22, 1, 0.36, 1] },
+        }}
+      >
+        <span
+          className="select-none whitespace-nowrap font-sans font-bold uppercase lg:text-[278px]"
+          style={{
+            lineHeight: 1,
+            letterSpacing: '0.44em',
+            color: 'transparent',
+            WebkitTextStroke: '1.5px rgb(255 72 0 / 0.42)',
+          }}
+        >
+          inferno
+        </span>
+      </motion.div>
+
+      {/* brilho laranja na base */}
       <motion.div
         className="absolute inset-x-0 bottom-0 h-[65%] pointer-events-none"
         initial={{ opacity: 0 }}
